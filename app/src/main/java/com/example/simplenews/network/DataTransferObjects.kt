@@ -1,6 +1,6 @@
 package com.example.simplenews.network
 
-import com.example.simplenews.database.DatabaseNews
+import com.example.simplenews.database.feed.DatabaseNewsFeed
 import com.example.simplenews.domain.News
 import com.example.simplenews.network.news.Response
 
@@ -18,9 +18,9 @@ fun Response.asDomainModel(): List<News> {
 }
 
 // convert network result to database objects
-fun Response.asDatabaseModel(): Array<DatabaseNews> {
+fun Response.asDatabaseModel(): Array<DatabaseNewsFeed> {
     return docs.map {
-        DatabaseNews(
+        DatabaseNewsFeed(
             id = it.id,
             title = it.headline.main,
             snippet = it.snippet,

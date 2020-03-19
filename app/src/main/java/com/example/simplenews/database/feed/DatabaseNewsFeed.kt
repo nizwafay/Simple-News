@@ -1,11 +1,11 @@
-package com.example.simplenews.database
+package com.example.simplenews.database.feed
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.simplenews.domain.News
 
 @Entity
-data class DatabaseNews constructor(
+data class DatabaseNewsFeed constructor(
     @PrimaryKey
     val id: String,
     val title: String,
@@ -15,7 +15,7 @@ data class DatabaseNews constructor(
     val webUrl: String
 )
 
-fun List<DatabaseNews>.asDomainModel(): List<News> {
+fun List<DatabaseNewsFeed>.asDomainModel(): List<News> {
     return map {
         News(
             title = it.title,
