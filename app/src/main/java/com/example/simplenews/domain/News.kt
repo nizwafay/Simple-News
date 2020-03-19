@@ -1,6 +1,6 @@
 package com.example.simplenews.domain
 
-data class NewsModel(
+data class News(
     val title: String,
     val snippet: String,
     val imageUrl: String,
