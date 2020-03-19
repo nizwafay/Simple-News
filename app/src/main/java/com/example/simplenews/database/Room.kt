@@ -13,23 +13,23 @@ import com.example.simplenews.database.search.SearchDao
     DatabaseNewsFeed::class,
     DatabaseNewsFavourite::class,
     DatabaseSearch::class], version = 1)
-abstract class Databases: RoomDatabase() {
+abstract class NewsDatabases: RoomDatabase() {
     abstract val newsFeedDao: NewsFeedDao
     abstract val newsFavouriteDao: NewsFavouriteDao
     abstract val searchDao: SearchDao
 
     companion object {
         @Volatile
-        private var INSTANCE: Databases? = null
+        private var INSTANCE: NewsDatabases? = null
 
-        fun getInstance(context: Context): Databases {
+        fun getInstance(context: Context): NewsDatabases {
             synchronized(this) {
                 var instance = INSTANCE
 
                 if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
-                        Databases::class.java,
+                        NewsDatabases::class.java,
                         "news_databases"
                     )
                         .fallbackToDestructiveMigration()
