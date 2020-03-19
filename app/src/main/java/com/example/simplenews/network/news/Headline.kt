@@ -4,12 +4,12 @@ import com.squareup.moshi.Json
 
 data class Headline(
     @Json(name = "content_kicker")
-    val contentKicker: Any?,
-    val kicker: Any?,
-    val main: String,
-    val name: Any?,
+    val contentKicker: String?,
+    val kicker: String?,
+    val main: String?,
+    val name: String?,
     @Json(name = "print_headline")
-    val printHeadline: Any?,
-    val seo: Any?,
-    val sub: Any?
+    val printHeadline: String?,
+    val seo: String?,
+    val sub: String?
 )

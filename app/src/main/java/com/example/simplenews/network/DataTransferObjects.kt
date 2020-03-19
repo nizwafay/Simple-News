@@ -8,9 +8,9 @@ import com.example.simplenews.network.news.Response
 fun Response.asDomainModel(): List<News> {
     return docs.map {
         News(
-            title = it.headline.main,
+            title = it.headline?.main,
             snippet = it.snippet,
-            imageUrl = it.multimedia[0].url,
+            imageUrl = it.multimedia[0]?.url,
             date = it.pubDate,
             webUrl = it.webUrl
         )
@@ -22,9 +22,9 @@ fun Response.asDatabaseModel(): Array<DatabaseNewsFeed> {
     return docs.map {
         DatabaseNewsFeed(
             id = it.id,
-            title = it.headline.main,
+            title = it.headline?.main,
             snippet = it.snippet,
-            imageUrl = it.multimedia[0].url,
+            imageUrl = it.multimedia[0]?.url,
             date = it.pubDate,
             webUrl = it.webUrl
         )
