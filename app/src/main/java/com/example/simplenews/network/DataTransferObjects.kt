@@ -10,7 +10,7 @@ fun Response.asDomainModel(): List<News> {
         News(
             title = it.headline?.main,
             snippet = it.snippet,
-            imageUrl = it.multimedia[0]?.url,
+            imageUrl = if (it.multimedia.isNullOrEmpty()) null else it.multimedia[0]?.url,
             date = it.pubDate,
             webUrl = it.webUrl
         )
@@ -24,7 +24,7 @@ fun Response.asDatabaseModel(): Array<DatabaseNewsFeed> {
             id = it.id,
             title = it.headline?.main,
             snippet = it.snippet,
-            imageUrl = it.multimedia[0]?.url,
+            imageUrl = if (it.multimedia.isNullOrEmpty()) null else it.multimedia[0]?.url,
             date = it.pubDate,
             webUrl = it.webUrl
         )

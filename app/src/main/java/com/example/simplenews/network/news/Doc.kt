@@ -13,7 +13,7 @@ data class Doc(
     val keywords: List<Keyword?>,
     @Json(name = "lead_paragraph")
     val leadParagraph: String?,
-    val multimedia: List<Multimedia?>,
+    val multimedia: List<Multimedia?>?,
     @Json(name = "news_desk")
     val newsDesk: String?,
     @Json(name = "pub_date")
