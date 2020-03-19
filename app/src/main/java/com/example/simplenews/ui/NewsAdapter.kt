@@ -5,21 +5,29 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
+import com.example.simplenews.domain.News
 
-class NewsAdapter(private val newsData: Array<String>) :
-    RecyclerView.Adapter<NewsAdapter.MyViewHolder>() {
+class NewsAdapter: RecyclerView.Adapter<NewsViewHolder>() {
 
-    class MyViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
+    var newsData: List<News> = emptyList()
+        set(value) {
+            field = value
+            // Notify any registered observers that the data set has changed. This will cause every
+            // element in our RecyclerView to be invalidated.
+            notifyDataSetChanged()
+        }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val textView = LayoutInflater.from(parent.context)
             .inflate(R.layout.text_item_view, parent, false) as TextView
-        return MyViewHolder(textView)
+        return NewsViewHolder(textView)
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.textView.text = newsData[position]
+    override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
+        holder.textView.text = newsData[position].title
     }
 
     override fun getItemCount() = newsData.size
 }
+
+class NewsViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
