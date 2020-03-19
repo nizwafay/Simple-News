@@ -3,6 +3,7 @@ package com.example.simplenews.network
 import com.example.simplenews.network.news.NewsContainer
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -13,8 +14,8 @@ private const val APP_ID = "2ff90da4-77ae-4726-8230-868531f98733"
 
 interface ApiService {
     @GET("articlesearch.json")
-    fun getArticles(@Query("q") keyword: String,
-                    @Query("page") page: Int = 0): NewsContainer
+    fun getNews(@Query("q") keyword: String,
+                @Query("page") page: Int = 0): Call<NewsContainer>
 }
 
 object Network {

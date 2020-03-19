@@ -17,27 +17,19 @@ abstract class NewsDatabases: RoomDatabase() {
     abstract val newsFeedDao: NewsFeedDao
     abstract val newsFavouriteDao: NewsFavouriteDao
     abstract val searchDao: SearchDao
+}
 
-    companion object {
-        @Volatile
-        private var INSTANCE: NewsDatabases? = null
+private lateinit var INSTANCE: NewsDatabases
 
-        fun getInstance(context: Context): NewsDatabases {
-            synchronized(this) {
-                var instance = INSTANCE
-
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        NewsDatabases::class.java,
-                        "news_databases"
-                    )
-                        .fallbackToDestructiveMigration()
-                        .build()
-                    INSTANCE = instance
-                }
-                return instance
-            }
+fun getDatabase(context: Context): NewsDatabases {
+    synchronized(NewsDatabases::class.java) {
+        if (!::INSTANCE.isInitialized) {
+            INSTANCE = Room.databaseBuilder(context.applicationContext,
+                NewsDatabases::class.java,
+                "news_databases")
+                .fallbackToDestructiveMigration()
+                .build()
         }
     }
+    return INSTANCE
 }

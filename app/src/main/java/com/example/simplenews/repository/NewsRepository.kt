@@ -17,7 +17,7 @@ class NewsRepository(private val newsDatabases: NewsDatabases) {
 
     suspend fun getNews(keyword: String) {
         withContext(Dispatchers.IO) {
-            val news = Network.service.getArticles(keyword)
+            val news = Network.service.getNews(keyword)
             newsDatabases.newsFeedDao.insertAll(*news.response.asDatabaseModel())
         }
     }
