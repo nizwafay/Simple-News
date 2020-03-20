@@ -9,6 +9,7 @@ buildscript {
         version_moshi = '1.9.2'
         version_navigation = '2.2.1'
         version_lifecycle = '2.2.0'
+        version_material = '1.1.0'
     }
     repositories {
         google()

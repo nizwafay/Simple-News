@@ -2,9 +2,11 @@ package com.example.simplenews.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.annotation.LayoutRes
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
+import com.example.simplenews.databinding.NewsCardItemBinding
 import com.example.simplenews.domain.News
 
 class NewsAdapter: RecyclerView.Adapter<NewsViewHolder>() {
@@ -18,16 +20,28 @@ class NewsAdapter: RecyclerView.Adapter<NewsViewHolder>() {
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        val textView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.text_item_view, parent, false) as TextView
-        return NewsViewHolder(textView)
+        val binding: NewsCardItemBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            NewsViewHolder.LAYOUT,
+            parent,
+            false)
+        return NewsViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.textView.text = newsData[position].title
+        holder.viewDataBinding.news = newsData[position]
     }
 
     override fun getItemCount() = newsData.size
 }
 
-class NewsViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
+/**
+ * ViewHolder for DevByte items. All work is done by data binding.
+ */
+class NewsViewHolder(val viewDataBinding: NewsCardItemBinding) :
+    RecyclerView.ViewHolder(viewDataBinding.root) {
+    companion object {
+        @LayoutRes
+        val LAYOUT = R.layout.news_card_item
+    }
+}

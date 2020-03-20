@@ -24,6 +24,6 @@
             android:id="@+id/newsFeedRV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/text_item_view" />
+            tools:listitem="@layout/news_card_item" />
     </FrameLayout>
 </layout>
