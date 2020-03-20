@@ -13,4 +13,7 @@ interface NewsFeedDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg news: DatabaseNewsFeed)
+
+    @Query("DELETE FROM databaseNewsFeed")
+    fun deleteAll()
 }
