@@ -7,10 +7,7 @@ import androidx.appcompat.widget.SearchView
 import com.example.simplenews.database.NewsDatabases
 import com.example.simplenews.database.getDatabase
 import com.example.simplenews.repository.NewsRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     private val viewModelJob = SupervisorJob()
@@ -38,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModelJob.cancelChildren()
                 viewModelScope.launch {
                     newsRepository.getNews(query, true)
                 }
