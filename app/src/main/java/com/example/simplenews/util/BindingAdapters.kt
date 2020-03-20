@@ -8,9 +8,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.simplenews.R
 
-/**
- * Binding adapter used to hide the spinner once data is available
- */
 @BindingAdapter("showLoading")
 fun showLoading(view: View, isLoading: Boolean) {
     view.visibility = if (isLoading) View.VISIBLE else View.GONE

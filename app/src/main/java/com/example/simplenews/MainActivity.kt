@@ -9,21 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.simplenews.viewmodels.NewsViewModel
 
 class MainActivity : AppCompatActivity() {
-    /**
-     * One way to delay creation of the viewModel until an appropriate lifecycle method is to use
-     * lazy. This requires that viewModel not be referenced before onActivityCreated, which we
-     * do in this Fragment.
-     */
-    private val viewModel: NewsViewModel by lazy {
-        val activity = requireNotNull(this)
-        ViewModelProvider(this, NewsViewModel.Factory(activity.application))
-            .get(NewsViewModel::class.java)
-    }
+    private lateinit var viewModel: NewsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+        viewModel = ViewModelProvider(this, NewsViewModel.Factory(this.application))
+            .get(NewsViewModel::class.java)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
