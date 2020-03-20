@@ -18,6 +18,7 @@ data class DatabaseNewsFeed constructor(
 fun List<DatabaseNewsFeed>.asDomainModel(): List<News> {
     return map {
         News(
+            id = it.id,
             title = it.title,
             snippet = it.snippet,
             imageUrl = it.imageUrl?.let { url ->

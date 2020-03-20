@@ -8,6 +8,7 @@ import com.example.simplenews.network.news.Response
 fun Response.asDomainModel(): List<News> {
     return docs.map {
         News(
+            id = it.id,
             title = it.headline?.main,
             snippet = it.snippet,
             imageUrl = if (it.multimedia.isNullOrEmpty()) null else it.multimedia[0]?.url,
