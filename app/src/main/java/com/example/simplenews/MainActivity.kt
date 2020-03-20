@@ -4,29 +4,26 @@ import android.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
-import android.view.View
 import androidx.appcompat.widget.SearchView
-import com.example.simplenews.database.NewsDatabases
-import com.example.simplenews.database.getDatabase
-import com.example.simplenews.repository.NewsRepository
-import kotlinx.coroutines.*
+import androidx.lifecycle.ViewModelProvider
+import com.example.simplenews.viewmodels.NewsViewModel
 
 class MainActivity : AppCompatActivity() {
-    private val viewModelJob = SupervisorJob()
-    private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
-
-    private val database: NewsDatabases by lazy {
-        val context = requireNotNull(this)
-        getDatabase(context)
+    /**
+     * One way to delay creation of the viewModel until an appropriate lifecycle method is to use
+     * lazy. This requires that viewModel not be referenced before onActivityCreated, which we
+     * do in this Fragment.
+     */
+    private val viewModel: NewsViewModel by lazy {
+        val activity = requireNotNull(this)
+        ViewModelProvider(this, NewsViewModel.Factory(activity.application))
+            .get(NewsViewModel::class.java)
     }
-
-    private lateinit var newsRepository: NewsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        newsRepository = NewsRepository(database)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -35,19 +32,14 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu?.findItem(R.id.app_bar_search)
         val searchView = searchItem?.actionView as SearchView
 
-        searchView.setOnSearchClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
-                val lp = v?.layoutParams
-                lp?.width = ActionBar.LayoutParams.MATCH_PARENT
-            }
-        })
+        searchView.setOnSearchClickListener { v ->
+            val lp = v?.layoutParams
+            lp?.width = ActionBar.LayoutParams.MATCH_PARENT
+        }
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModelJob.cancelChildren()
-                viewModelScope.launch {
-                    newsRepository.getNews(query, true)
-                }
+                viewModel.fetchNews(query, true)
                 searchView.clearFocus()
                 return true
             }
@@ -57,10 +49,5 @@ class MainActivity : AppCompatActivity() {
             }
         })
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModelJob.cancel()
     }
 }

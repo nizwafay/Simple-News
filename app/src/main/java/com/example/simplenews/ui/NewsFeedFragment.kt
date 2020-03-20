@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
 import com.example.simplenews.databinding.FragmentNewsFeedBinding
 import com.example.simplenews.domain.News
-import com.example.simplenews.viewmodels.NewsFeedViewModel
+import com.example.simplenews.viewmodels.NewsViewModel
 
 class NewsFeedFragment: Fragment() {
     /**
@@ -22,10 +22,10 @@ class NewsFeedFragment: Fragment() {
      * lazy. This requires that viewModel not be referenced before onActivityCreated, which we
      * do in this Fragment.
      */
-    private val viewModel: NewsFeedViewModel by lazy {
+    private val viewModel: NewsViewModel by lazy {
         val activity = requireNotNull(this.activity)
-        ViewModelProvider(this, NewsFeedViewModel.Factory(activity.application))
-            .get(NewsFeedViewModel::class.java)
+        ViewModelProvider(this, NewsViewModel.Factory(activity.application))
+            .get(NewsViewModel::class.java)
     }
 
     private var viewModelAdapter: NewsAdapter? = null
