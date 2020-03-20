@@ -20,7 +20,10 @@ fun List<DatabaseNewsFeed>.asDomainModel(): List<News> {
         News(
             title = it.title,
             snippet = it.snippet,
-            imageUrl = it.imageUrl,
+            imageUrl = it.imageUrl?.let { url ->
+                val completeUrl = "https://static01.nyt.com/${url}"
+                completeUrl
+            },
             date = it.date,
             webUrl = it.webUrl
         )

@@ -39,7 +39,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{news.date.toString()}"
+                        android:text="@{news.date}"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -58,9 +58,8 @@
             </LinearLayout>
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="194dp"
-                android:src="@mipmap/ic_launcher"
-                android:scaleType="centerCrop"/>
+                android:layout_height="wrap_content"
+                app:imageUrl="@{news.imageUrl}"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
