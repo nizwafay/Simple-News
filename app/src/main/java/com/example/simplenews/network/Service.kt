@@ -26,7 +26,11 @@ private val moshi = Moshi.Builder()
 object Network {
     // create interceptor to add api-key for every request
     private val interceptor = Interceptor { chain ->
-        val url = chain.request().url().newBuilder().addQueryParameter("api-key", APP_ID).build()
+        val url = chain.request().url().newBuilder()
+            .addQueryParameter("api-key", APP_ID)
+            .addQueryParameter("sort", "newest")
+            .addQueryParameter("fq", "source:(\"The New York Times\")")
+            .build()
         val request = chain.request()
             .newBuilder()
             .url(url)
