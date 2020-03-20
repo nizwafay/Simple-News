@@ -11,9 +11,9 @@ import com.example.simplenews.R
 /**
  * Binding adapter used to hide the spinner once data is available
  */
-@BindingAdapter("goneIfNotNull")
-fun goneIfNotNull(view: View, it: Any?) {
-    view.visibility = if (it != null) View.GONE else View.VISIBLE
+@BindingAdapter("showLoading")
+fun showLoading(view: View, isLoading: Boolean) {
+    view.visibility = if (isLoading) View.VISIBLE else View.GONE
 }
 
 /**

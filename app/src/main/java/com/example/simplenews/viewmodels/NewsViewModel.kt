@@ -1,10 +1,9 @@
 package com.example.simplenews.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.example.simplenews.database.getDatabase
+import com.example.simplenews.domain.News
 import com.example.simplenews.repository.NewsRepository
 import kotlinx.coroutines.*
 
@@ -16,16 +15,22 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     private val database = getDatabase(application)
     private val newsRepository = NewsRepository(database)
 
+    val news: LiveData<List<News>> = newsRepository.news
+
+    private var _showTopLoading = MutableLiveData<Boolean>()
+    val showTopLoading: LiveData<Boolean>
+        get() = _showTopLoading
+
     init {
-        fetchNews(clearDbFirst = true)
+        fetchNews(initialFetch = true)
     }
 
-    val news = newsRepository.news
-
-    fun fetchNews(keyword: String? = null, clearDbFirst: Boolean = false) {
+    fun fetchNews(keyword: String? = null, initialFetch: Boolean = false) {
         viewModelJob.cancelChildren()
+        _showTopLoading.value = initialFetch
         viewModelScope.launch {
-            newsRepository.getNews(keyword, clearDbFirst)
+            newsRepository.getNews(keyword, initialFetch)
+            _showTopLoading.value = false
         }
     }
 

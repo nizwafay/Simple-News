@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
 import com.example.simplenews.databinding.FragmentNewsFeedBinding
-import com.example.simplenews.domain.News
 import com.example.simplenews.viewmodels.NewsViewModel
 
 class NewsFeedFragment: Fragment() {
@@ -28,14 +27,14 @@ class NewsFeedFragment: Fragment() {
             .get(NewsViewModel::class.java)
     }
 
-    private var viewModelAdapter: NewsAdapter? = null
+    private var viewModelAdapter = NewsAdapter(NewsListener {
+        Toast.makeText(context, it.webUrl, Toast.LENGTH_LONG).show()
+    })
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.news.observe(viewLifecycleOwner, Observer<List<News>> { news ->
-            news?.let {
-                viewModelAdapter?.submitList(it)
-            }
+        viewModel.news.observe(viewLifecycleOwner, Observer {
+            viewModelAdapter.submitList(it)
         })
     }
 
@@ -48,9 +47,6 @@ class NewsFeedFragment: Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
-        viewModelAdapter = NewsAdapter(NewsListener {
-            Toast.makeText(context, it.webUrl, Toast.LENGTH_LONG).show()
-        })
 
         binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
             layoutManager = LinearLayoutManager(context)
