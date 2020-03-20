@@ -1,8 +1,10 @@
 package com.example.simplenews
 
+import android.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import com.example.simplenews.database.NewsDatabases
 import com.example.simplenews.database.getDatabase
@@ -32,6 +34,13 @@ class MainActivity : AppCompatActivity() {
 
         val searchItem = menu?.findItem(R.id.app_bar_search)
         val searchView = searchItem?.actionView as SearchView
+
+        searchView.setOnSearchClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                val lp = v?.layoutParams
+                lp?.width = ActionBar.LayoutParams.MATCH_PARENT
+            }
+        })
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
