@@ -9,16 +9,22 @@ import com.example.simplenews.network.Network
 import com.example.simplenews.network.asDatabaseModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 class NewsRepository(private val newsDatabases: NewsDatabases) {
     val news: LiveData<List<News>> = Transformations.map(newsDatabases.newsFeedDao.getNews()) {
         it.asDomainModel()
     }
 
-    suspend fun getNews(keyword: String) {
+    suspend fun getNews(keyword: String?, clearDbFirst: Boolean = false) {
         withContext(Dispatchers.IO) {
-            val news = Network.service.getNews(keyword)
-            newsDatabases.newsFeedDao.insertAll(*news.response.asDatabaseModel())
+            try {
+                val news = Network.service.getNews(keyword)
+                if (clearDbFirst) {
+                    newsDatabases.newsFeedDao.deleteAll()
+                }
+                newsDatabases.newsFeedDao.insertAll(*news.response.asDatabaseModel())
+            } catch (e: Exception) {}
         }
     }
 }

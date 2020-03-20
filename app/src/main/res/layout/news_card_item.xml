@@ -7,13 +7,18 @@
         <variable
             name="news"
             type="com.example.simplenews.domain.News"/>
+        <variable
+            name="newsListener"
+            type="com.example.simplenews.ui.NewsListener"/>
     </data>
+
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:onClick="@{() -> newsListener.onClick(news)}"
         app:strokeWidth="1dp"
         app:strokeColor="#000000"
         app:cardElevation="0dp">
@@ -39,7 +44,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{news.date.toString()}"
+                        android:text="@{news.date}"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -58,9 +63,9 @@
             </LinearLayout>
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="194dp"
-                android:src="@mipmap/ic_launcher"
-                android:scaleType="centerCrop"/>
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                app:imageUrl="@{news.imageUrl}"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

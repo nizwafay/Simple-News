@@ -33,8 +33,8 @@ class NewsFeedFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.news.observe(viewLifecycleOwner, Observer<List<News>> { news ->
-            news?.apply {
-                viewModelAdapter?.newsData = news
+            news?.let {
+                viewModelAdapter?.submitList(it)
             }
         })
     }
@@ -48,7 +48,9 @@ class NewsFeedFragment: Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
-        viewModelAdapter = NewsAdapter()
+        viewModelAdapter = NewsAdapter(NewsListener {
+            Toast.makeText(context, it.webUrl, Toast.LENGTH_LONG).show()
+        })
 
         binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
             layoutManager = LinearLayoutManager(context)

@@ -15,7 +15,7 @@ private const val APP_ID = "vzsMQlHlaK60ZY96HyoIIaohXjmXbPKa"
 
 interface ApiService {
     @GET("articlesearch.json")
-    suspend fun getNews(@Query("q") keyword: String,
+    suspend fun getNews(@Query("q") keyword: String?,
                 @Query("page") page: Int = 0): NewsContainer
 }
 
@@ -26,7 +26,11 @@ private val moshi = Moshi.Builder()
 object Network {
     // create interceptor to add api-key for every request
     private val interceptor = Interceptor { chain ->
-        val url = chain.request().url().newBuilder().addQueryParameter("api-key", APP_ID).build()
+        val url = chain.request().url().newBuilder()
+            .addQueryParameter("api-key", APP_ID)
+            .addQueryParameter("sort", "newest")
+            .addQueryParameter("fq", "source:(\"The New York Times\")")
+            .build()
         val request = chain.request()
             .newBuilder()
             .url(url)

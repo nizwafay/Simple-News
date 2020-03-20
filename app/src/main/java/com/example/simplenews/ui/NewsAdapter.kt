@@ -4,20 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
 import com.example.simplenews.databinding.NewsCardItemBinding
 import com.example.simplenews.domain.News
 
-class NewsAdapter: RecyclerView.Adapter<NewsViewHolder>() {
-
-    var newsData: List<News> = emptyList()
-        set(value) {
-            field = value
-            // Notify any registered observers that the data set has changed. This will cause every
-            // element in our RecyclerView to be invalidated.
-            notifyDataSetChanged()
-        }
+class NewsAdapter(val clickListener: NewsListener):
+    ListAdapter<News, NewsViewHolder>(NewsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val binding: NewsCardItemBinding = DataBindingUtil.inflate(
@@ -29,10 +24,12 @@ class NewsAdapter: RecyclerView.Adapter<NewsViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.viewDataBinding.news = newsData[position]
+        holder.viewDataBinding.also {
+            it.news = getItem(position)
+            it.newsListener = clickListener
+            it.executePendingBindings()
+        }
     }
-
-    override fun getItemCount() = newsData.size
 }
 
 /**
@@ -44,4 +41,18 @@ class NewsViewHolder(val viewDataBinding: NewsCardItemBinding) :
         @LayoutRes
         val LAYOUT = R.layout.news_card_item
     }
+}
+
+class NewsDiffCallback: DiffUtil.ItemCallback<News>() {
+    override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: News, newItem: News): Boolean {
+        return oldItem == newItem
+    }
+}
+
+class NewsListener(val clickListener: (News) -> Unit) {
+    fun onClick(news: News) = clickListener(news)
 }

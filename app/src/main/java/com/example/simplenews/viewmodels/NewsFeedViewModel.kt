@@ -21,7 +21,7 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
 
     init {
         viewModelScope.launch {
-            newsRepository.getNews("corona")
+            newsRepository.getNews(null)
         }
     }
 
