@@ -29,7 +29,7 @@ class NewsViewModel(application: Application): ViewModel() {
         viewModelJob.cancelChildren()
         _showTopLoading.value = initialFetch
         viewModelScope.launch {
-            newsRepository.getNews(keyword, initialFetch)
+            newsRepository.getNews(keyword, clearDbFirst = initialFetch)
             _showTopLoading.value = false
         }
     }
@@ -39,13 +39,28 @@ class NewsViewModel(application: Application): ViewModel() {
         viewModelJob.cancel()
     }
 
-    class Factory(private val app: Application) : ViewModelProvider.Factory {
+    class Factory(private val application: Application): ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return NewsViewModel(app) as T
+                val key = "UserProfileViewModel"
+                return if(hashMapViewModel.containsKey(key)){
+                    getViewModel(key) as T
+                } else {
+                    addViewModel(key, NewsViewModel(application))
+                    getViewModel(key) as T
+                }
             }
-            throw IllegalArgumentException("Unable to construct viewmodel")
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+
+        companion object {
+            val hashMapViewModel = HashMap<String, ViewModel>()
+            fun addViewModel(key: String, viewModel: ViewModel){
+                hashMapViewModel[key] = viewModel
+            }
+            fun getViewModel(key: String): ViewModel? {
+                return hashMapViewModel[key]
+            }
         }
     }
 }

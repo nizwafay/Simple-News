@@ -16,7 +16,7 @@ class NewsRepository(private val newsDatabases: NewsDatabases) {
         it.asDomainModel()
     }
 
-    suspend fun getNews(keyword: String?, page: Int?, clearDbFirst: Boolean = false) {
+    suspend fun getNews(keyword: String? = null, page: Int? = null, clearDbFirst: Boolean = false) {
         withContext(Dispatchers.IO) {
             try {
                 val news = Network.service.getNews(keyword, page)
