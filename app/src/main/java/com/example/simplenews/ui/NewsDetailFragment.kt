@@ -2,6 +2,7 @@ package com.example.simplenews.ui
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -13,9 +14,20 @@ import com.example.simplenews.viewmodels.NewsDetailViewModel
 import kotlinx.android.synthetic.main.fragment_news_detail.*
 
 class NewsDetailFragment: Fragment() {
+    private lateinit var activity: AppCompatActivity
+
     private lateinit var viewModel: NewsDetailViewModel
 
     private val args: NewsDetailFragmentArgs by navArgs()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity = this.getActivity() as AppCompatActivity
+        activity.supportActionBar?.apply {
+            setShowHideAnimationEnabled(false)
+            hide()
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,5 +61,10 @@ class NewsDetailFragment: Fragment() {
 
         previousButton?.setOnClickListener { viewModel.onClickPreviousButton() }
         nextButton?.setOnClickListener { viewModel.onClickNextButton() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity.supportActionBar?.show()
     }
 }
