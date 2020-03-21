@@ -14,5 +14,9 @@
     <fragment
         android:id="@+id/newsDetailFragment"
         android:name="com.example.simplenews.ui.NewsDetailFragment"
-        android:label="NewsDetailFragment" />
+        android:label="NewsDetailFragment" >
+        <argument
+            android:name="index"
+            app:argType="integer" />
+    </fragment>
 </navigation>

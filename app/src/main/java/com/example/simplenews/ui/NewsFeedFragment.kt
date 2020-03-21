@@ -2,7 +2,6 @@ package com.example.simplenews.ui
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
@@ -81,11 +80,9 @@ class NewsFeedFragment: Fragment() {
         binding.viewModel = viewModel
 
         viewModelAdapter = NewsAdapter(NewsListener {
-            Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
-//            view?.findNavController()?.navigate(
-//                R.id.action_newsFeedFragment_to_newsDetailFragment
-////                NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsDetailFragment(it)
-//            )
+            view?.findNavController()?.navigate(
+                NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsDetailFragment(it)
+            )
         })
 
         binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {

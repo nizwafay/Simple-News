@@ -38,6 +38,7 @@ class NewsAdapter(private val clickListener: NewsListener):
         when (holder) {
             is NewsViewHolder -> {
                 holder.viewDataBinding.also {
+                    it.position = position
                     it.news = getItem(position)
                     it.newsListener = clickListener
                     it.executePendingBindings()
