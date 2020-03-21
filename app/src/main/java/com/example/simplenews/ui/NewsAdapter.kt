@@ -1,6 +1,7 @@
 package com.example.simplenews.ui
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
@@ -11,30 +12,48 @@ import com.example.simplenews.R
 import com.example.simplenews.databinding.NewsCardItemBinding
 import com.example.simplenews.domain.News
 
-class NewsAdapter(val clickListener: NewsListener):
-    ListAdapter<News, NewsViewHolder>(NewsDiffCallback()) {
+private const val VIEW_TYPE_LOADING = 0
+private const val VIEW_TYPE_ITEM = 1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        val binding: NewsCardItemBinding = DataBindingUtil.inflate(
+class NewsAdapter(private val clickListener: NewsListener):
+    ListAdapter<News?, RecyclerView.ViewHolder>(NewsDiffCallback()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val newsCardBinding: NewsCardItemBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             NewsViewHolder.LAYOUT,
             parent,
             false)
-        return NewsViewHolder(binding)
+
+        val loadingView = LayoutInflater.from(parent.context)
+            .inflate(LoadingViewHolder.LAYOUT, parent, false)
+
+        return when (viewType) {
+            VIEW_TYPE_LOADING -> LoadingViewHolder(loadingView)
+            VIEW_TYPE_ITEM -> NewsViewHolder(newsCardBinding)
+            else -> throw ClassCastException("Unknown viewType $viewType")
+        }
     }
 
-    override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.viewDataBinding.also {
-            it.news = getItem(position)
-            it.newsListener = clickListener
-            it.executePendingBindings()
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is NewsViewHolder -> {
+                holder.viewDataBinding.also {
+                    it.news = getItem(position)
+                    it.newsListener = clickListener
+                    it.executePendingBindings()
+                }
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            null -> VIEW_TYPE_LOADING
+            else -> VIEW_TYPE_ITEM
         }
     }
 }
 
-/**
- * ViewHolder for DevByte items. All work is done by data binding.
- */
 class NewsViewHolder(val viewDataBinding: NewsCardItemBinding) :
     RecyclerView.ViewHolder(viewDataBinding.root) {
     companion object {
@@ -42,8 +61,15 @@ class NewsViewHolder(val viewDataBinding: NewsCardItemBinding) :
         val LAYOUT = R.layout.news_card_item
     }
 }
+class LoadingViewHolder(view: View) :
+    RecyclerView.ViewHolder(view) {
+    companion object {
+        @LayoutRes
+        val LAYOUT = R.layout.loading_item
+    }
+}
 
-class NewsDiffCallback: DiffUtil.ItemCallback<News>() {
+class NewsDiffCallback: DiffUtil.ItemCallback<News?>() {
     override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
         return oldItem.id == newItem.id
     }

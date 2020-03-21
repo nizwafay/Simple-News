@@ -6,12 +6,12 @@ import com.example.simplenews.database.getDatabase
 import com.example.simplenews.domain.News
 import com.example.simplenews.network.news.Meta
 import com.example.simplenews.repository.NewsRepository
+import com.example.simplenews.ui.NewsAdapter
 import kotlinx.coroutines.*
 import kotlin.math.ceil
 
 class NewsViewModel(application: Application): ViewModel() {
     private val viewModelJob = SupervisorJob()
-
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
     private val database = getDatabase(application)
@@ -20,6 +20,10 @@ class NewsViewModel(application: Application): ViewModel() {
     val news: LiveData<List<News>> = newsRepository.news
     private val keywordRepo: LiveData<String?> = newsRepository.keyword
     private val metaRepo: LiveData<Meta> = newsRepository.meta
+
+    private var _newsForAdapter = MutableLiveData<List<News?>>()
+    val newsForAdapter: LiveData<List<News?>>
+        get() = _newsForAdapter
 
     private var isLoading = MutableLiveData<Boolean>()
     private var _showTopLoading = MutableLiveData<Boolean>()
@@ -43,14 +47,20 @@ class NewsViewModel(application: Application): ViewModel() {
         }
     }
 
-    fun trackScroll(countItem: Int, lastVisiblePosition: Int) {
+    fun trackScroll(newsAdapter: NewsAdapter, countItem: Int, lastVisiblePosition: Int) {
         val isLastPosition = countItem.minus(1) == lastVisiblePosition
         if (countItem > 0 && isLastPosition && isLoading.value != true
             && countItem < metaRepo.value?.hits ?: -1
         ) {
             val page = ceil(countItem/10.0).toInt()
+            _newsForAdapter.value = newsForAdapter.value?.plus(listOf(null))
+            newsAdapter.notifyItemInserted(countItem)
             fetchNews(keywordRepo.value, page)
         }
+    }
+
+    fun onNewsRepoUpdated(news: List<News>) {
+        _newsForAdapter.value = news
     }
 
     override fun onCleared() {

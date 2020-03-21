@@ -34,6 +34,9 @@ class NewsFeedFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.news.observe(viewLifecycleOwner, Observer {
+            viewModel.onNewsRepoUpdated(it)
+        })
+        viewModel.newsForAdapter.observe(viewLifecycleOwner, Observer {
             viewModelAdapter.submitList(it)
         })
     }
@@ -61,7 +64,7 @@ class NewsFeedFragment: Fragment() {
                     val countItem = linearLayoutManager.itemCount
                     val lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
 
-                    viewModel.trackScroll(countItem, lastVisiblePosition)
+                    viewModel.trackScroll(viewModelAdapter, countItem, lastVisiblePosition)
                 }
             })
         }
