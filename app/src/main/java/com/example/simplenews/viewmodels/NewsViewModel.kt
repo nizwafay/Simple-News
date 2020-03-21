@@ -10,7 +10,7 @@ import com.example.simplenews.ui.NewsAdapter
 import kotlinx.coroutines.*
 import kotlin.math.ceil
 
-class NewsViewModel(application: Application): ViewModel() {
+class NewsViewModel(application: Application): AndroidViewModel(application) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
@@ -47,14 +47,14 @@ class NewsViewModel(application: Application): ViewModel() {
         }
     }
 
-    fun trackScroll(newsAdapter: NewsAdapter, countItem: Int, lastVisiblePosition: Int) {
+    fun trackScroll(newsAdapter: NewsAdapter?, countItem: Int, lastVisiblePosition: Int) {
         val isLastPosition = countItem.minus(1) == lastVisiblePosition
         if (countItem > 0 && isLastPosition && isLoading.value != true
             && countItem < metaRepo.value?.hits ?: -1
         ) {
             val page = ceil(countItem/10.0).toInt()
             _newsForAdapter.value = newsForAdapter.value?.plus(listOf(null))
-            newsAdapter.notifyItemInserted(countItem)
+            newsAdapter?.notifyItemInserted(countItem)
             fetchNews(keywordRepo.value, page)
         }
     }
@@ -68,28 +68,13 @@ class NewsViewModel(application: Application): ViewModel() {
         viewModelJob.cancel()
     }
 
-    class Factory(private val application: Application): ViewModelProvider.Factory {
+    class Factory(val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
-                val key = "UserProfileViewModel"
-                return if(hashMapViewModel.containsKey(key)){
-                    getViewModel(key) as T
-                } else {
-                    addViewModel(key, NewsViewModel(application))
-                    getViewModel(key) as T
-                }
+                @Suppress("UNCHECKED_CAST")
+                return NewsViewModel(app) as T
             }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-
-        companion object {
-            val hashMapViewModel = HashMap<String, ViewModel>()
-            fun addViewModel(key: String, viewModel: ViewModel){
-                hashMapViewModel[key] = viewModel
-            }
-            fun getViewModel(key: String): ViewModel? {
-                return hashMapViewModel[key]
-            }
+            throw IllegalArgumentException("Unable to construct viewmodel")
         }
     }
 }
