@@ -16,7 +16,7 @@ private const val APP_ID = "vzsMQlHlaK60ZY96HyoIIaohXjmXbPKa"
 interface ApiService {
     @GET("articlesearch.json")
     suspend fun getNews(@Query("q") keyword: String?,
-                @Query("page") page: Int = 0): NewsContainer
+                @Query("page") page: Int?): NewsContainer
 }
 
 private val moshi = Moshi.Builder()

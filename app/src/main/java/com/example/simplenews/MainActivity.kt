@@ -9,14 +9,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.simplenews.viewmodels.NewsViewModel
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewModel: NewsViewModel
+
+    private val viewModel: NewsViewModel by lazy {
+        val activity = requireNotNull(this)
+        ViewModelProvider(activity, NewsViewModel.Factory(activity.application))
+            .get(NewsViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        viewModel = ViewModelProvider(this, NewsViewModel.Factory(this.application))
-            .get(NewsViewModel::class.java)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -32,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModel.fetchNews(query, true)
+                viewModel.fetchNews(query, initialFetch = true)
                 searchView.clearFocus()
                 return true
             }

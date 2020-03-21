@@ -7,7 +7,7 @@ import com.example.simplenews.domain.News
 import com.example.simplenews.repository.NewsRepository
 import kotlinx.coroutines.*
 
-class NewsViewModel(application: Application): AndroidViewModel(application) {
+class NewsViewModel(application: Application): ViewModel() {
     private val viewModelJob = SupervisorJob()
 
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
