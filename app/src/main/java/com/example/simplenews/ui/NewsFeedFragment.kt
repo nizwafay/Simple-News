@@ -2,12 +2,14 @@ package com.example.simplenews.ui
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
@@ -76,11 +78,14 @@ class NewsFeedFragment: Fragment() {
 
         // Set the lifecycleOwner so DataBinding can observe LiveData
         binding.lifecycleOwner = viewLifecycleOwner
-
         binding.viewModel = viewModel
 
         viewModelAdapter = NewsAdapter(NewsListener {
-//            view?.findNavController()?.navigate(R.id.action_newsFeedFragment_to_newsDetailFragment)
+            Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+//            view?.findNavController()?.navigate(
+//                R.id.action_newsFeedFragment_to_newsDetailFragment
+////                NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsDetailFragment(it)
+//            )
         })
 
         binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {

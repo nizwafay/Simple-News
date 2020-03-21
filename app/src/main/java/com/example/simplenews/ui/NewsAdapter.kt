@@ -79,6 +79,6 @@ class NewsDiffCallback: DiffUtil.ItemCallback<News?>() {
     }
 }
 
-class NewsListener(val clickListener: (News) -> Unit) {
-    fun onClick(news: News) = clickListener(news)
+class NewsListener(val clickListener: (Int) -> Unit) {
+    fun onClick(index: Int) = clickListener(index)
 }

@@ -30,6 +30,10 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     val showTopLoading: LiveData<Boolean>
         get() = _showTopLoading
 
+    private var _selectedNewsIndex = MutableLiveData<Int>()
+    val selectedNewsIndex: LiveData<Int>
+        get() = _selectedNewsIndex
+
     init {
         fetchNews(initialFetch = true)
     }
@@ -47,6 +51,14 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun onNewsRepoUpdated(news: List<News>) {
+        _newsForAdapter.value = news
+    }
+
+    fun onNewsSelected() {
+        _selectedNewsIndex.value = 0
+    }
+
     fun trackScroll(newsAdapter: NewsAdapter?, countItem: Int, lastVisiblePosition: Int) {
         val isLastPosition = countItem.minus(1) == lastVisiblePosition
         if (countItem > 0 && isLastPosition && isLoading.value != true
@@ -57,10 +69,6 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
             newsAdapter?.notifyItemInserted(countItem)
             fetchNews(keywordRepo.value, page)
         }
-    }
-
-    fun onNewsRepoUpdated(news: List<News>) {
-        _newsForAdapter.value = news
     }
 
     override fun onCleared() {
