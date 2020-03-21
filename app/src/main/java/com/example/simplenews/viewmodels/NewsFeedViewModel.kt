@@ -10,7 +10,7 @@ import com.example.simplenews.ui.NewsAdapter
 import kotlinx.coroutines.*
 import kotlin.math.ceil
 
-class NewsViewModel(application: Application): AndroidViewModel(application) {
+class NewsFeedViewModel(application: Application): AndroidViewModel(application) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
@@ -70,9 +70,9 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
 
     class Factory(val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(NewsFeedViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return NewsViewModel(app) as T
+                return NewsFeedViewModel(app) as T
             }
             throw IllegalArgumentException("Unable to construct viewmodel")
         }
