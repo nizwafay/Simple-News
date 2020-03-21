@@ -54,14 +54,15 @@
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="?android:attr/textColorSecondary"
                         tools:text="Date"/>
-                    <com.google.android.material.button.MaterialButton
-                        style="?attr/borderlessButtonStyle"
+                    <CheckBox
+                        android:id="@+id/favouriteIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Fav"
+                        android:button="@drawable/ic_stat_favourite"
+                        app:buttonTint="@color/colorPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
+                        app:layout_constraintBottom_toBottomOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
             <ImageView
