@@ -10,4 +10,12 @@ class NewsDetailViewModel: ViewModel() {
     fun updateSelectedIndex(index: Int) {
         _selectedNewsIndex.value = index
     }
+
+    fun onClickPreviousButton() {
+        _selectedNewsIndex.value = _selectedNewsIndex.value?.minus(1)
+    }
+
+    fun onClickNextButton() {
+        _selectedNewsIndex.value = _selectedNewsIndex.value?.plus(1)
+    }
 }

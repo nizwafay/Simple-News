@@ -36,8 +36,18 @@ class NewsDetailFragment: Fragment() {
             args.news?.let { news ->
                 detailWebView.loadUrl(news[it].webUrl)
             }
+
+            if (it > 0) previousButton?.visibility = View.VISIBLE
+            else previousButton?.visibility = View.GONE
+            args.news?.let { news ->
+                if (it < news.size - 1) nextButton?.visibility = View.VISIBLE
+                else nextButton?.visibility = View.GONE
+            }
         })
 
         viewModel.updateSelectedIndex(args.index)
+
+        previousButton?.setOnClickListener { viewModel.onClickPreviousButton() }
+        nextButton?.setOnClickListener { viewModel.onClickNextButton() }
     }
 }
