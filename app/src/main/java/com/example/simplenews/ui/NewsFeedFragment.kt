@@ -34,6 +34,54 @@ class NewsFeedFragment: Fragment() {
         setHasOptionsMenu(true)
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val binding: FragmentNewsFeedBinding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_news_feed, container, false)
+
+        // Set the lifecycleOwner so DataBinding can observe LiveData
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+
+        viewModelAdapter = NewsAdapter(NewsListener {
+            view?.findNavController()?.navigate(
+                NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsDetailFragment(
+                    it, viewModel.news.value?.toTypedArray()
+                )
+            )
+        })
+
+        binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
+            val linearLayoutManager = LinearLayoutManager(context)
+
+            layoutManager = linearLayoutManager
+
+            adapter = viewModelAdapter
+
+            addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val countItem = linearLayoutManager.itemCount
+                    val lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+
+                    viewModel.trackScroll(viewModelAdapter, countItem, lastVisiblePosition)
+                }
+            })
+        }
+
+        return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel.news.observe(viewLifecycleOwner, Observer {
+            viewModel.onNewsRepoUpdated(it)
+        })
+        viewModel.newsForAdapter.observe(viewLifecycleOwner, Observer {
+            viewModelAdapter?.submitList(it)
+        })
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_item, menu)
 
@@ -58,51 +106,5 @@ class NewsFeedFragment: Fragment() {
         })
 
         super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.news.observe(viewLifecycleOwner, Observer {
-            viewModel.onNewsRepoUpdated(it)
-        })
-        viewModel.newsForAdapter.observe(viewLifecycleOwner, Observer {
-            viewModelAdapter?.submitList(it)
-        })
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val binding: FragmentNewsFeedBinding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_news_feed, container, false)
-
-        // Set the lifecycleOwner so DataBinding can observe LiveData
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
-
-        viewModelAdapter = NewsAdapter(NewsListener {
-            view?.findNavController()?.navigate(
-                NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsDetailFragment(it)
-            )
-        })
-
-        binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
-            val linearLayoutManager = LinearLayoutManager(context)
-
-            layoutManager = linearLayoutManager
-
-            adapter = viewModelAdapter
-
-            addOnScrollListener(object: RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    val countItem = linearLayoutManager.itemCount
-                    val lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
-
-                    viewModel.trackScroll(viewModelAdapter, countItem, lastVisiblePosition)
-                }
-            })
-        }
-
-        return binding.root
     }
 }

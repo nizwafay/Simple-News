@@ -1,19 +1,13 @@
 package com.example.simplenews.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 
-class NewsDetailViewModel(application: Application): AndroidViewModel(application) {
+class NewsDetailViewModel: ViewModel() {
+    private var _selectedNewsIndex = MutableLiveData<Int>()
+    val selectedNewsIndex: LiveData<Int>
+        get() = _selectedNewsIndex
 
-    class Factory(val app: Application) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(NewsDetailViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return NewsDetailViewModel(app) as T
-            }
-            throw IllegalArgumentException("Unable to construct viewmodel")
-        }
+    fun updateSelectedIndex(index: Int) {
+        _selectedNewsIndex.value = index
     }
 }
