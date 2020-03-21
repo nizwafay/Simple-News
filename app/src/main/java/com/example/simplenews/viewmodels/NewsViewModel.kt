@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.simplenews.database.getDatabase
 import com.example.simplenews.domain.News
+import com.example.simplenews.network.news.Meta
 import com.example.simplenews.repository.NewsRepository
 import kotlinx.coroutines.*
+import kotlin.math.ceil
 
 class NewsViewModel(application: Application): ViewModel() {
     private val viewModelJob = SupervisorJob()
@@ -16,7 +18,10 @@ class NewsViewModel(application: Application): ViewModel() {
     private val newsRepository = NewsRepository(database)
 
     val news: LiveData<List<News>> = newsRepository.news
+    private val keywordRepo: LiveData<String?> = newsRepository.keyword
+    private val metaRepo: LiveData<Meta> = newsRepository.meta
 
+    private var isLoading = MutableLiveData<Boolean>()
     private var _showTopLoading = MutableLiveData<Boolean>()
     val showTopLoading: LiveData<Boolean>
         get() = _showTopLoading
@@ -25,12 +30,26 @@ class NewsViewModel(application: Application): ViewModel() {
         fetchNews(initialFetch = true)
     }
 
-    fun fetchNews(keyword: String? = null, initialFetch: Boolean = false) {
+    fun fetchNews(keyword: String? = null, page: Int? = null, initialFetch: Boolean = false) {
         viewModelJob.cancelChildren()
-        _showTopLoading.value = initialFetch
-        viewModelScope.launch {
-            newsRepository.getNews(keyword, clearDbFirst = initialFetch)
-            _showTopLoading.value = false
+        if (initialFetch || isLoading.value != true) {
+            _showTopLoading.value = initialFetch
+            isLoading.value = true
+            viewModelScope.launch {
+                newsRepository.getNews(keyword, page, initialFetch)
+                _showTopLoading.value = false
+                isLoading.value = false
+            }
+        }
+    }
+
+    fun trackScroll(countItem: Int, lastVisiblePosition: Int) {
+        val isLastPosition = countItem.minus(1) == lastVisiblePosition
+        if (countItem > 0 && isLastPosition && isLoading.value != true
+            && countItem < metaRepo.value?.hits ?: -1
+        ) {
+            val page = ceil(countItem/10.0).toInt()
+            fetchNews(keywordRepo.value, page)
         }
     }
 

@@ -49,8 +49,21 @@ class NewsFeedFragment: Fragment() {
         binding.viewModel = viewModel
 
         binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
-            layoutManager = LinearLayoutManager(context)
+            val linearLayoutManager = LinearLayoutManager(context)
+
+            layoutManager = linearLayoutManager
+
             adapter = viewModelAdapter
+
+            addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val countItem = linearLayoutManager.itemCount
+                    val lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+
+                    viewModel.trackScroll(countItem, lastVisiblePosition)
+                }
+            })
         }
 
         return binding.root
