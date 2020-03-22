@@ -12,7 +12,7 @@ import com.example.simplenews.database.search.SearchDao
 @Database(entities = [
     DatabaseNewsFeed::class,
     DatabaseNewsFavourite::class,
-    DatabaseSearch::class], version = 1,
+    DatabaseSearch::class], version = 2,
     exportSchema = false)
 abstract class NewsDatabases: RoomDatabase() {
     abstract val newsFeedDao: NewsFeedDao

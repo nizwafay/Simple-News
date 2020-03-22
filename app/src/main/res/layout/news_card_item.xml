@@ -13,6 +13,9 @@
         <variable
             name="newsListener"
             type="com.example.simplenews.ui.NewsListener"/>
+        <variable
+            name="newsFavoriteListener"
+            type="com.example.simplenews.ui.NewsFavoriteListener"/>
     </data>
 
 
@@ -59,7 +62,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:button="@drawable/ic_stat_favourite"
-                        app:buttonTint="@color/colorPrimary"
+                        android:onClick="@{() -> newsFavoriteListener.onClick(news)}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />

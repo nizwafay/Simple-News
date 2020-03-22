@@ -43,13 +43,12 @@ class NewsFeedFragment: Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
-        viewModelAdapter = NewsAdapter(NewsListener {
-            view?.findNavController()?.navigate(
-                NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsDetailFragment(
-                    it, viewModel.news.value?.toTypedArray()
-                )
-            )
-        })
+        viewModelAdapter = NewsAdapter(
+            NewsListener {
+                view?.findNavController()?.navigate(
+                    NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsDetailFragment(
+                        it, viewModel.news.value?.toTypedArray()))},
+            NewsFavoriteListener { viewModel.saveNews(it) })
 
         binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
             val linearLayoutManager = LinearLayoutManager(context)
@@ -104,7 +103,17 @@ class NewsFeedFragment: Fragment() {
                 return false
             }
         })
-
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_favorite -> {
+            view?.findNavController()?.navigate(
+                NewsFeedFragmentDirections.actionNewsFeedFragmentToNewsFavoriteFragment()
+            )
+            true
+        }
+
+        else -> super.onOptionsItemSelected(item)
     }
 }

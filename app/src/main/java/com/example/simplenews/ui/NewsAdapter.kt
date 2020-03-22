@@ -3,6 +3,7 @@ package com.example.simplenews.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
@@ -15,7 +16,11 @@ import com.example.simplenews.domain.News
 private const val VIEW_TYPE_LOADING = 0
 private const val VIEW_TYPE_ITEM = 1
 
-class NewsAdapter(private val clickListener: NewsListener):
+class NewsAdapter(
+    private val clickListener: NewsListener,
+    private val clickFavoriteListener: NewsFavoriteListener,
+    private val isFavoriteFragment: Boolean = false
+):
     ListAdapter<News?, RecyclerView.ViewHolder>(NewsDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val newsCardBinding: NewsCardItemBinding = DataBindingUtil.inflate(
@@ -29,7 +34,7 @@ class NewsAdapter(private val clickListener: NewsListener):
 
         return when (viewType) {
             VIEW_TYPE_LOADING -> LoadingViewHolder(loadingView)
-            VIEW_TYPE_ITEM -> NewsViewHolder(newsCardBinding)
+            VIEW_TYPE_ITEM -> NewsViewHolder(newsCardBinding, isFavoriteFragment)
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
@@ -41,6 +46,7 @@ class NewsAdapter(private val clickListener: NewsListener):
                     it.position = position
                     it.news = getItem(position)
                     it.newsListener = clickListener
+                    it.newsFavoriteListener = clickFavoriteListener
                     it.executePendingBindings()
                 }
             }
@@ -55,8 +61,16 @@ class NewsAdapter(private val clickListener: NewsListener):
     }
 }
 
-class NewsViewHolder(val viewDataBinding: NewsCardItemBinding) :
+class NewsViewHolder(val viewDataBinding: NewsCardItemBinding, isFavoriteFragment: Boolean):
     RecyclerView.ViewHolder(viewDataBinding.root) {
+
+    init {
+        if (isFavoriteFragment) {
+            val favoriteIcon: CheckBox = itemView.findViewById(R.id.favouriteIcon)
+            favoriteIcon.setButtonDrawable(R.drawable.ic_action_delete_forever)
+        }
+    }
+
     companion object {
         @LayoutRes
         val LAYOUT = R.layout.news_card_item
@@ -82,4 +96,8 @@ class NewsDiffCallback: DiffUtil.ItemCallback<News?>() {
 
 class NewsListener(val clickListener: (Int) -> Unit) {
     fun onClick(index: Int) = clickListener(index)
+}
+
+class NewsFavoriteListener(val clickListener: (News) -> Unit) {
+    fun onClick(news: News) = clickListener(news)
 }

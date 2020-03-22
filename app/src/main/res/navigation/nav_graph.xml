@@ -10,6 +10,9 @@
         <action
             android:id="@+id/action_newsFeedFragment_to_newsDetailFragment"
             app:destination="@id/newsDetailFragment" />
+        <action
+            android:id="@+id/action_newsFeedFragment_to_newsFavoriteFragment"
+            app:destination="@id/newsFavoriteFragment" />
     </fragment>
     <fragment
         android:id="@+id/newsDetailFragment"
@@ -22,5 +25,13 @@
             android:name="news"
             app:argType="com.example.simplenews.domain.News[]"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/newsFavoriteFragment"
+        android:name="com.example.simplenews.ui.NewsFavoriteFragment"
+        android:label="NewsFavoriteFragment" >
+        <action
+            android:id="@+id/action_newsFavoriteFragment_to_newsDetailFragment"
+            app:destination="@id/newsDetailFragment" />
     </fragment>
 </navigation>

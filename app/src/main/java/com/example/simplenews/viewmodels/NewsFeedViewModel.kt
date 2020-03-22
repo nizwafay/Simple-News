@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.simplenews.database.getDatabase
 import com.example.simplenews.domain.News
+import com.example.simplenews.domain.asDatabaseModel
 import com.example.simplenews.network.news.Meta
 import com.example.simplenews.repository.NewsRepository
 import com.example.simplenews.ui.NewsAdapter
@@ -43,6 +44,14 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
                 newsRepository.getNews(keyword, page, initialFetch)
                 _showTopLoading.value = false
                 isLoading.value = false
+            }
+        }
+    }
+
+    fun saveNews(news: News) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                database.newsFavouriteDao.insert(news.asDatabaseModel())
             }
         }
     }
