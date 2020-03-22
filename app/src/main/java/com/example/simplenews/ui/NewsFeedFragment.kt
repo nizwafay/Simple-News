@@ -79,6 +79,14 @@ class NewsFeedFragment: Fragment() {
         viewModel.newsForAdapter.observe(viewLifecycleOwner, Observer {
             viewModelAdapter?.submitList(it)
         })
+        viewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
+            viewModel.newsForAdapter.value?.let { news ->
+                if (isLoading == false && news[news.size - 1] == null) {
+                    viewModelAdapter?.submitList(viewModel.news.value)
+                }
+            }
+        })
+        viewModel.latestHits.observeForever {}
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

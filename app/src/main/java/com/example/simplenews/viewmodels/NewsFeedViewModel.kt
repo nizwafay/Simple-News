@@ -19,13 +19,15 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
 
     val news: LiveData<List<News>> = newsRepository.news
     private val keywordRepo: LiveData<String?> = newsRepository.keyword
-    private val latestHits: LiveData<Int> = newsRepository.hits
+    val latestHits: LiveData<Int> = newsRepository.hits
 
     private var _newsForAdapter = MutableLiveData<List<News?>>()
     val newsForAdapter: LiveData<List<News?>>
         get() = _newsForAdapter
 
-    private var isLoading = MutableLiveData<Boolean>()
+    private var _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
     private var _showTopLoading = MutableLiveData<Boolean>()
     val showTopLoading: LiveData<Boolean>
         get() = _showTopLoading
@@ -38,11 +40,11 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
         viewModelJob.cancelChildren()
         if (initialFetch || isLoading.value != true) {
             _showTopLoading.value = initialFetch
-            isLoading.value = true
+            _isLoading.value = true
             viewModelScope.launch {
                 newsRepository.getNews(keyword, page, initialFetch)
                 _showTopLoading.value = false
-                isLoading.value = false
+                _isLoading.value = false
             }
         }
     }
@@ -65,8 +67,12 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
             && countItem < latestHits.value ?: -1
         ) {
             val page = ceil(countItem/10.0).toInt()
-            _newsForAdapter.value = newsForAdapter.value?.plus(listOf(null))
-            newsAdapter?.notifyItemInserted(countItem)
+            newsForAdapter.value?.let {
+                if (it[it.size - 1] != null) {
+                    _newsForAdapter.value = newsForAdapter.value?.plus(listOf(null))
+                    newsAdapter?.notifyItemInserted(countItem)
+                }
+            }
             fetchNews(keywordRepo.value, page)
         }
     }
