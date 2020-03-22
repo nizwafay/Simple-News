@@ -3,7 +3,7 @@ package com.example.simplenews.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.Button
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
@@ -66,8 +66,11 @@ class NewsViewHolder(val viewDataBinding: NewsCardItemBinding, isFavoriteFragmen
 
     init {
         if (isFavoriteFragment) {
-            val favoriteIcon: CheckBox = itemView.findViewById(R.id.favouriteIcon)
-            favoriteIcon.setButtonDrawable(R.drawable.ic_action_delete_forever)
+            val deleteIcon: Button = itemView.findViewById(R.id.deleteIcon)
+            deleteIcon.visibility = View.VISIBLE
+        } else {
+            val favoriteIcon: Button = itemView.findViewById(R.id.favoriteIcon)
+            favoriteIcon.visibility = View.VISIBLE
         }
     }
 

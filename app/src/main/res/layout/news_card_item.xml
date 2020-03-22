@@ -57,11 +57,25 @@
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="?android:attr/textColorSecondary"
                         tools:text="Date"/>
-                    <CheckBox
-                        android:id="@+id/favouriteIcon"
+                    <Button
+                        android:id="@+id/favoriteIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:button="@drawable/ic_stat_favourite"
+                        android:visibility="gone"
+                        app:icon="@drawable/ic_action_favorite"
+                        android:text="Save"
+                        android:onClick="@{() -> newsFavoriteListener.onClick(news)}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                    <Button
+                        android:id="@+id/deleteIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:icon="@drawable/ic_action_delete_forever"
+                        android:text="Delete"
+                        android:backgroundTint="@color/design_default_color_error"
                         android:onClick="@{() -> newsFavoriteListener.onClick(news)}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
