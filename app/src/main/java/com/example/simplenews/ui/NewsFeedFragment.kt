@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
 import com.example.simplenews.databinding.FragmentNewsFeedBinding
@@ -18,6 +19,13 @@ import com.example.simplenews.viewmodels.NewsFeedViewModel
 
 class NewsFeedFragment: Fragment() {
     private lateinit var manager: GridLayoutManager
+    private lateinit var menuItem: Menu
+
+    private val searchRV: RecyclerView by lazy {
+        val view = requireView()
+        view.findViewById<RecyclerView>(R.id.searchRV)
+    }
+
     /**
      * One way to delay creation of the viewModel until an appropriate lifecycle method is to use
      * lazy. This requires that viewModel not be referenced before onActivityCreated, which we
@@ -30,6 +38,7 @@ class NewsFeedFragment: Fragment() {
     }
 
     private var viewModelAdapter: NewsAdapter? = null
+    private var searchAdapter: SearchAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +81,27 @@ class NewsFeedFragment: Fragment() {
             })
         }
 
+        searchAdapter = SearchAdapter(SearchListener({
+            viewModel.onSearchNews(it)
+            val searchItem = menuItem.findItem(R.id.app_bar_search)
+            val searchView = searchItem.actionView as SearchView
+            viewModel.onSearchNews(it)
+            searchView.clearFocus()
+            searchRV.visibility = View.GONE
+            searchItem.collapseActionView()
+        }, { viewModel.onDeleteSearch(it) }))
+
+        binding.root.findViewById<RecyclerView>(R.id.searchRV).apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = searchAdapter
+        }
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        searchRV.itemAnimator = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -85,19 +114,35 @@ class NewsFeedFragment: Fragment() {
         })
         viewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
             viewModel.newsForAdapter.value?.let { news ->
-                if (isLoading == false && news[news.size - 1] == null) {
+                if (isLoading == false && news.isNotEmpty() && news[news.size - 1] == null) {
                     viewModelAdapter?.submitList(viewModel.news.value)
                 }
             }
         })
         viewModel.latestHits.observeForever {}
+        viewModel.searchHistory.observe(viewLifecycleOwner, Observer {
+            searchAdapter?.submitList(it)
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menuItem = menu
         inflater.inflate(R.menu.menu_item, menu)
 
         val searchItem = menu.findItem(R.id.app_bar_search)
         val searchView = searchItem?.actionView as SearchView
+
+        searchItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                searchRV.visibility = View.VISIBLE
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                searchRV.visibility = View.GONE
+                return true
+            }
+        })
 
         searchView.setOnSearchClickListener { v ->
             val lp = v?.layoutParams
@@ -105,9 +150,11 @@ class NewsFeedFragment: Fragment() {
         }
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModel.fetchNews(query, initialFetch = true)
+            override fun onQueryTextSubmit(query: String): Boolean {
+                viewModel.onSearchNews(query)
                 searchView.clearFocus()
+                searchRV.visibility = View.GONE
+                searchItem.collapseActionView()
                 return true
             }
 
@@ -115,6 +162,7 @@ class NewsFeedFragment: Fragment() {
                 return false
             }
         })
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 

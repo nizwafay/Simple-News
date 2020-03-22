@@ -14,6 +14,9 @@ interface SearchDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(keyword: DatabaseSearch)
 
+    @Query("DELETE FROM databasesearch WHERE keyword = :keyword")
+    fun delete(keyword: String)
+
     @Query("DELETE FROM databasesearch WHERE id = (SELECT id FROM databasesearch ORDER BY id ASC LIMIT 1)")
     fun deleteOldestItem()
 }

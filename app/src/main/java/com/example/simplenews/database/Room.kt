@@ -15,7 +15,7 @@ import com.example.simplenews.database.search.SearchDao
     DatabaseNewsFeed::class,
     DatabaseNewsFavourite::class,
     DatabaseSearch::class,
-    DatabaseNewsRequest::class], version = 4,
+    DatabaseNewsRequest::class], version = 5,
     exportSchema = false)
 abstract class NewsDatabases: RoomDatabase() {
     abstract val newsFeedDao: NewsFeedDao

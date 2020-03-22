@@ -3,6 +3,7 @@ package com.example.simplenews.viewmodels
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.simplenews.database.getDatabase
+import com.example.simplenews.database.search.DatabaseSearch
 import com.example.simplenews.domain.News
 import com.example.simplenews.domain.asDatabaseModel
 import com.example.simplenews.repository.NewsRepository
@@ -32,11 +33,18 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
     val showTopLoading: LiveData<Boolean>
         get() = _showTopLoading
 
+    private val searchHistoryDatabase = database.searchDao.getSearchHistory()
+    val searchHistory: LiveData<List<String>> = Transformations.map(searchHistoryDatabase) {
+        it.map { databaseSearch ->
+            databaseSearch.keyword
+        }.reversed()
+    }
+
     init {
         fetchNews(initialFetch = true)
     }
 
-    fun fetchNews(keyword: String? = null, page: Int? = null, initialFetch: Boolean = false) {
+    private fun fetchNews(keyword: String? = null, page: Int? = null, initialFetch: Boolean = false) {
         viewModelJob.cancelChildren()
         if (initialFetch || isLoading.value != true) {
             _showTopLoading.value = initialFetch
@@ -53,6 +61,26 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 database.newsFavouriteDao.insert(news.asDatabaseModel())
+            }
+        }
+    }
+
+    fun onSearchNews(keyword: String) {
+        fetchNews(keyword, initialFetch = true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                if (searchHistory.value?.size == 10) {
+                    database.searchDao.deleteOldestItem()
+                }
+                database.searchDao.insert(DatabaseSearch(keyword = keyword))
+            }
+        }
+    }
+
+    fun onDeleteSearch(keyword: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                database.searchDao.delete(keyword)
             }
         }
     }

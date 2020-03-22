@@ -13,5 +13,5 @@ data class DatabaseNewsRequest(
 )
 
 fun List<DatabaseNewsRequest>.asDomainModel(): Int {
-    return this[0].hits
+    return if (this.isEmpty()) 0 else this[0].hits
 }
