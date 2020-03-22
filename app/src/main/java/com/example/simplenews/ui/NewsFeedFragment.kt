@@ -3,6 +3,7 @@ package com.example.simplenews.ui
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
+import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
@@ -101,6 +102,14 @@ class NewsFeedFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val wrapper = view.findViewById<LinearLayout>(R.id.searchRvWrapper)
+        wrapper.setOnClickListener {
+            val searchItem = menuItem.findItem(R.id.app_bar_search)
+            val searchView = searchItem.actionView as SearchView
+            searchView.clearFocus()
+            searchRV.visibility = View.GONE
+            searchItem.collapseActionView()
+        }
         searchRV.itemAnimator = null
     }
 

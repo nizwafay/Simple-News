@@ -29,12 +29,19 @@
             app:layout_constraintRight_toRightOf="parent"
             android:indeterminate="true"
             android:layout_margin="8dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/searchRV"
+        <LinearLayout
+            android:id="@+id/searchRvWrapper"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/search_item" />
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/search_item" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
