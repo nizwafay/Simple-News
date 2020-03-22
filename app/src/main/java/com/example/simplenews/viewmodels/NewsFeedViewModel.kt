@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import com.example.simplenews.database.getDatabase
 import com.example.simplenews.domain.News
 import com.example.simplenews.domain.asDatabaseModel
-import com.example.simplenews.network.news.Meta
 import com.example.simplenews.repository.NewsRepository
 import com.example.simplenews.ui.NewsAdapter
 import kotlinx.coroutines.*
@@ -20,7 +19,7 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
 
     val news: LiveData<List<News>> = newsRepository.news
     private val keywordRepo: LiveData<String?> = newsRepository.keyword
-    private val metaRepo: LiveData<Meta> = newsRepository.meta
+    private val latestHits: LiveData<Int> = newsRepository.hits
 
     private var _newsForAdapter = MutableLiveData<List<News?>>()
     val newsForAdapter: LiveData<List<News?>>
@@ -63,7 +62,7 @@ class NewsFeedViewModel(application: Application): AndroidViewModel(application)
     fun trackScroll(newsAdapter: NewsAdapter?, countItem: Int, lastVisiblePosition: Int) {
         val isLastPosition = countItem.minus(1) == lastVisiblePosition
         if (countItem > 0 && isLastPosition && isLoading.value != true
-            && countItem < metaRepo.value?.hits ?: -1
+            && countItem < latestHits.value ?: -1
         ) {
             val page = ceil(countItem/10.0).toInt()
             _newsForAdapter.value = newsForAdapter.value?.plus(listOf(null))
