@@ -1,5 +1,6 @@
 package com.example.simplenews.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.ActionBar
@@ -9,13 +10,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplenews.R
 import com.example.simplenews.databinding.FragmentNewsFeedBinding
 import com.example.simplenews.viewmodels.NewsFeedViewModel
 
 class NewsFeedFragment: Fragment() {
+    private lateinit var manager: GridLayoutManager
     /**
      * One way to delay creation of the viewModel until an appropriate lifecycle method is to use
      * lazy. This requires that viewModel not be referenced before onActivityCreated, which we
@@ -51,17 +53,19 @@ class NewsFeedFragment: Fragment() {
             NewsFavoriteListener { viewModel.saveNews(it) })
 
         binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
-            val linearLayoutManager = LinearLayoutManager(context)
-
-            layoutManager = linearLayoutManager
-
+            activity?.let {
+                manager = GridLayoutManager(it, if (
+                    it.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                ) 4 else 1)
+            }
+            layoutManager = manager
             adapter = viewModelAdapter
 
             addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    val countItem = linearLayoutManager.itemCount
-                    val lastVisiblePosition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                    val countItem = manager.itemCount
+                    val lastVisiblePosition = manager.findLastVisibleItemPosition()
 
                     viewModel.trackScroll(viewModelAdapter, countItem, lastVisiblePosition)
                 }
