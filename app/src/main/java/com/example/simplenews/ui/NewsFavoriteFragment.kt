@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -59,6 +60,13 @@ class NewsFavoriteFragment: Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel.news.observe(viewLifecycleOwner, Observer {
             viewModelAdapter?.submitList(it)
+
+            val noDataTV: TextView? = view?.findViewById(R.id.noData)
+            if (it.isNotEmpty()) {
+                noDataTV?.visibility = View.GONE
+            } else {
+                noDataTV?.visibility = View.VISIBLE
+            }
         })
     }
 }
