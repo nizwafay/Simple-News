@@ -20,6 +20,7 @@ import com.example.simplenews.viewmodels.NewsFavoriteViewModel
 
 class NewsFavoriteFragment: Fragment() {
     private lateinit var manager: GridLayoutManager
+    private lateinit var binding: FragmentNewsFavoriteBinding
     /**
      * One way to delay creation of the viewModel until an appropriate lifecycle method is to use
      * lazy. This requires that viewModel not be referenced before onActivityCreated, which we
@@ -35,7 +36,7 @@ class NewsFavoriteFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val binding: FragmentNewsFavoriteBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_news_favorite, container, false)
 
         // Set the lifecycleOwner so DataBinding can observe LiveData
@@ -50,7 +51,7 @@ class NewsFavoriteFragment: Fragment() {
             NewsFavoriteListener { viewModel.deleteNews(it) },
             isFavoriteFragment = true)
 
-        binding.root.findViewById<RecyclerView>(R.id.newsFavoriteRV).apply {
+        binding.newsFavoriteRV.apply {
             activity?.let {
                 manager = GridLayoutManager(it, if (
                     it.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -68,7 +69,7 @@ class NewsFavoriteFragment: Fragment() {
         viewModel.news.observe(viewLifecycleOwner, Observer {
             viewModelAdapter?.submitList(it)
 
-            val noDataTV: TextView? = view?.findViewById(R.id.noData)
+            val noDataTV: TextView? = binding.noData
             if (it.isNotEmpty()) {
                 noDataTV?.visibility = View.GONE
             } else {

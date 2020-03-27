@@ -21,11 +21,7 @@ import com.example.simplenews.viewmodels.NewsFeedViewModel
 class NewsFeedFragment: Fragment() {
     private lateinit var manager: GridLayoutManager
     private lateinit var menuItem: Menu
-
-    private val searchRV: RecyclerView by lazy {
-        val view = requireView()
-        view.findViewById<RecyclerView>(R.id.searchRV)
-    }
+    private lateinit var binding: FragmentNewsFeedBinding
 
     /**
      * One way to delay creation of the viewModel until an appropriate lifecycle method is to use
@@ -48,7 +44,7 @@ class NewsFeedFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val binding: FragmentNewsFeedBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_news_feed, container, false)
 
         // Set the lifecycleOwner so DataBinding can observe LiveData
@@ -62,7 +58,7 @@ class NewsFeedFragment: Fragment() {
                         it, viewModel.news.value?.toTypedArray()))},
             NewsFavoriteListener { viewModel.saveNews(it) })
 
-        binding.root.findViewById<RecyclerView>(R.id.newsFeedRV).apply {
+        binding.newsFeedRV.apply {
             activity?.let {
                 manager = GridLayoutManager(it, if (
                     it.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -88,11 +84,11 @@ class NewsFeedFragment: Fragment() {
             val searchView = searchItem.actionView as SearchView
             viewModel.onSearchNews(it)
             searchView.clearFocus()
-            searchRV.visibility = View.GONE
+            binding.searchRV.visibility = View.GONE
             searchItem.collapseActionView()
         }, { viewModel.onDeleteSearch(it) }))
 
-        binding.root.findViewById<RecyclerView>(R.id.searchRV).apply {
+        binding.searchRV.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = searchAdapter
         }
@@ -102,15 +98,14 @@ class NewsFeedFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val wrapper = view.findViewById<LinearLayout>(R.id.searchRvWrapper)
-        wrapper.setOnClickListener {
+        binding.searchRvWrapper.setOnClickListener {
             val searchItem = menuItem.findItem(R.id.app_bar_search)
             val searchView = searchItem.actionView as SearchView
             searchView.clearFocus()
-            searchRV.visibility = View.GONE
+            binding.searchRV.visibility = View.GONE
             searchItem.collapseActionView()
         }
-        searchRV.itemAnimator = null
+        binding.searchRV.itemAnimator = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -143,12 +138,12 @@ class NewsFeedFragment: Fragment() {
 
         searchItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                searchRV.visibility = View.VISIBLE
+                binding.searchRV.visibility = View.VISIBLE
                 return true
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                searchRV.visibility = View.GONE
+                binding.searchRV.visibility = View.GONE
                 return true
             }
         })
@@ -162,7 +157,7 @@ class NewsFeedFragment: Fragment() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 viewModel.onSearchNews(query)
                 searchView.clearFocus()
-                searchRV.visibility = View.GONE
+                binding.searchRV.visibility = View.GONE
                 searchItem.collapseActionView()
                 return true
             }

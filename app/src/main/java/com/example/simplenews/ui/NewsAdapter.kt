@@ -66,10 +66,10 @@ class NewsViewHolder(val viewDataBinding: NewsCardItemBinding, isFavoriteFragmen
 
     init {
         if (isFavoriteFragment) {
-            val deleteIcon: Button = itemView.findViewById(R.id.deleteIcon)
+            val deleteIcon: Button = viewDataBinding.deleteIcon
             deleteIcon.visibility = View.VISIBLE
         } else {
-            val favoriteIcon: Button = itemView.findViewById(R.id.favoriteIcon)
+            val favoriteIcon: Button = viewDataBinding.favoriteIcon
             favoriteIcon.visibility = View.VISIBLE
         }
     }
