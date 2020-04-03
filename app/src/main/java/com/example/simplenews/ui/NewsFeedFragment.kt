@@ -3,7 +3,6 @@ package com.example.simplenews.ui
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
-import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBar
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
@@ -84,7 +83,7 @@ class NewsFeedFragment: Fragment() {
             val searchView = searchItem.actionView as SearchView
             viewModel.onSearchNews(it)
             searchView.clearFocus()
-            binding.searchRV.visibility = View.GONE
+            binding.searchRvWrapper.visibility = View.GONE
             searchItem.collapseActionView()
         }, { viewModel.onDeleteSearch(it) }))
 
@@ -102,7 +101,7 @@ class NewsFeedFragment: Fragment() {
             val searchItem = menuItem.findItem(R.id.app_bar_search)
             val searchView = searchItem.actionView as SearchView
             searchView.clearFocus()
-            binding.searchRV.visibility = View.GONE
+            binding.searchRvWrapper.visibility = View.GONE
             searchItem.collapseActionView()
         }
         binding.searchRV.itemAnimator = null
@@ -138,12 +137,12 @@ class NewsFeedFragment: Fragment() {
 
         searchItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                binding.searchRV.visibility = View.VISIBLE
+                binding.searchRvWrapper.visibility = View.VISIBLE
                 return true
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                binding.searchRV.visibility = View.GONE
+                binding.searchRvWrapper.visibility = View.GONE
                 return true
             }
         })
@@ -157,7 +156,7 @@ class NewsFeedFragment: Fragment() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 viewModel.onSearchNews(query)
                 searchView.clearFocus()
-                binding.searchRV.visibility = View.GONE
+                binding.searchRvWrapper.visibility = View.GONE
                 searchItem.collapseActionView()
                 return true
             }
